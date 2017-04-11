@@ -27,14 +27,14 @@ public:
 
 	/*
 	 * send
-	 * Default send method to relay a void * to the client
+	 * Default send method to relay a default to the client
 	 * Returns whether an error occured
 	 */
 	bool send();
 
 	/*
 	 * send
-	 * Default send method to relay a void * to the client
+	 * Default send method to relay a const void * to the client
 	 */
 	bool send(const void *);
 

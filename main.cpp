@@ -67,6 +67,7 @@ int main(void) {
 
 	// frees the address info structure
 	freeaddrinfo(servinfo);
+
 	// a way to manually end the server
 	std::thread exitThread(manualExit, &shutdownServer);
 
@@ -83,13 +84,13 @@ int main(void) {
 		if (std::string(buf).substr(0, 2) == NEWCLIENT && getClientNum(newClient, clients, numClients) == -1 && numClients < MAXCLIENTS) {
 			clients[numClients] = newClient;
 			numClients++;
-		} else if (std::string(buf).substr(0, 2) == STARTGAME && numClients >= 2) {
+		} else if (std::string(buf).substr(0, 2) == STARTGAME && numClients >= 2 && !bitcampGame.isRunning() && getClientNum(newClient, clients, numClients) > 0) {
 			bitcampGame = Game(numClients, clients);
 			bitcampGame.startGame();
-		} else if (std::string(buf).substr(0, 2) == GAMEREQ && bitcampGame.isRunning()) {
+		} else if (std::string(buf).substr(0, 2) == GAMEREQ && bitcampGame.isRunning() && getClientNum(newClient, clients, numClients) > 0) {
 			Request newReq(getClientNum(newClient, clients, numClients), buf + 2, sizeof(buf) - 2);
 			bitcampGame.addRequest(newReq);
-		} else if (std::string(buf).substr(0, 2) == ENDGAME && bitcampGame.isRunning())
+		} else if (std::string(buf).substr(0, 2) == ENDGAME && bitcampGame.isRunning() && getClientNum(newClient, clients, numClients) > 0)
 			bitcampGame.killGame();
 	}
 	close(sockfd);

@@ -21,7 +21,6 @@ public:
 	void killGame();
 
 	~Game();
-
 private:
 	void run();
 

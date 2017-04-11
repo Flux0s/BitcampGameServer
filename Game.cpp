@@ -14,7 +14,7 @@ void Game::addRequest(Request newRequest) {
 }
 
 void Game::startGame() {
-	std::thread gameThread(run());
+	std::thread gameThread(run);
 }
 
 void Game::run() {
@@ -22,9 +22,12 @@ void Game::run() {
 	m_isRunning = true;
 	notifyAllPlayers("Starting game...");
 	while (m_killGame == false && gameover == false) {
-		//TODO: send clients messages that confirm server has received their data
-
+		if (m_requests.size() > 0) {
+			m_players[m_requests.front().getPlayerNum() - 1].send("Request received and handled.");
+			m_requests.pop();
+		}
 	}
+	m_isRunning = false;
 	notifyAllPlayers("Game has ended!");
 }
 
@@ -32,7 +35,6 @@ bool Game::isRunning() {
 	return (m_isRunning);
 }
 
-//TODO: notify clients that the game has been closed unexpectedly
 void Game::killGame() {
 	notifyAllPlayers("Game has been ended unexpectedly!");
 	m_killGame = true;
