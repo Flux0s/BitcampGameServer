@@ -20,13 +20,13 @@
 
 void manualExit(bool *);
 
-bool isAClient(Client, Client[MAXCLIENTS], int);
+int getClientNum(Client, Client *, int);
 
 int main(void) {
 	socklen_t addr_len;
 	int numbytes;
 	char buf[MAXBUFLEN];
-	int sockfd;
+	int sockfd = -1;
 	struct addrinfo hints, *servinfo, *p;
 	int rv;
 	struct sockaddr_storage their_addr;
@@ -47,7 +47,7 @@ int main(void) {
 		return 1;
 	}
 
-	// loop through all the results and bind to the first we can
+	// loop through all possible sockets in the linked list and bind the first that works
 	for (p = servinfo; p != NULL; p = p->ai_next) {
 		if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
 			perror("listener: socket");
@@ -60,13 +60,15 @@ int main(void) {
 		}
 		break;
 	}
-
+	// check if no sockets were bound
 	if (p == NULL) {
 		fprintf(stderr, "listener: failed to bind socket\n");
 		return 2;
 	}
 
+	// frees the address info structure
 	freeaddrinfo(servinfo);
+	// a way to manually end the server
 	std::thread exitThread(manualExit, &shutdownServer);
 
 	while (!shutdownServer) {
@@ -77,14 +79,19 @@ int main(void) {
 		}
 
 		Client newClient(sockfd, their_addr);
-		if (std::string(buf).substr(0, 2) == NEWCLIENT && !isAClient(newClient, clients, numClients) && numClients < MAXCLIENTS) {
+		if (std::string(buf).substr(0, 2) == NEWCLIENT && getClientNum(newClient, clients, numClients) != -1 && numClients < MAXCLIENTS) {
 			clients[numClients] = newClient;
-		}
-		if (std::string(buf).substr(0, 2) == STARTGAME && numClients >= 2) {
+			numClients++;
+		} else if (std::string(buf).substr(0, 2) == STARTGAME && numClients >= 2)
 			bitcampGame = Game(numClients, clients);
-		}
+		else if (std::string(buf).substr(0, 2) == GAMEREQ && bitcampGame.isRunning()) {
+			Request newReq(getClientNum(newClient, clients, numClients), buf + 2, sizeof(buf) - 2);
+			bitcampGame.addRequest(newReq);
+		} else if (std::string(buf).substr(0, 2) == ENDGAME && bitcampGame.isRunning())
+			bitcampGame.killGame();
 	}
-
+	if (bitcampGame.isRunning())
+		bitcampGame.killGame();
 	close(sockfd);
 	return 0;
 }
@@ -97,9 +104,9 @@ void manualExit(bool *shutdown) {
 	*shutdown = true;
 }
 
-bool isAClient(Client newClient, Client clients[MAXCLIENTS], int numClients) {
+int getClientNum(Client newClient, Client clients[MAXCLIENTS], int numClients) {
 	for (int i = 0; i < numClients; i++)
 		if (newClient.getIP() == clients->getIP())
-			return (true);
-	return (false);
+			return (i);
+	return (-1);
 }

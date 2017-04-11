@@ -3,6 +3,9 @@
 
 class Request {
 public:
+	Request();
+
+	Request(int, void *, int);
 
 private:
 	int m_player;

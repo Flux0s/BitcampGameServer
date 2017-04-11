@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <thread>
 #include <queue>
 #include "Client.h"
 #include "Request.h"
@@ -13,8 +14,16 @@ public:
 
 	void addRequest(Request);
 
+	void startGame();
+
+	bool isRunning();
+
+	void killGame();
+
 private:
-	bool m_isRunning;
+	void run();
+
+	bool m_isRunning, m_killGame;
 	int m_numPlayers;
 	Client *m_clients;
 	std::queue<Request> m_requests;
