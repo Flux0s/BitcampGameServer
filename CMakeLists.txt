@@ -3,5 +3,5 @@ project(Bitcamp)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp Client.h Client.cpp)
+set(SOURCE_FILES main.cpp Client.h Client.cpp Game.cpp Game.h)
 add_executable(Bitcamp ${SOURCE_FILES})
