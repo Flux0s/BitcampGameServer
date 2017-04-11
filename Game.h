@@ -3,6 +3,7 @@
 
 #include <thread>
 #include <queue>
+#include "iostream"
 #include "Client.h"
 #include "Request.h"
 
@@ -21,6 +22,7 @@ public:
 	void killGame();
 
 	~Game();
+
 private:
 	void run();
 

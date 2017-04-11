@@ -85,6 +85,7 @@ int main(void) {
 			clients[numClients] = newClient;
 			numClients++;
 		} else if (std::string(buf).substr(0, 2) == STARTGAME && numClients >= 2 && !bitcampGame.isRunning() && getClientNum(newClient, clients, numClients) > 0) {
+			//TODO: change the game object into a thread
 			bitcampGame = Game(numClients, clients);
 			bitcampGame.startGame();
 		} else if (std::string(buf).substr(0, 2) == GAMEREQ && bitcampGame.isRunning() && getClientNum(newClient, clients, numClients) > 0) {
