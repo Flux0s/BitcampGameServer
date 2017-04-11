@@ -33,7 +33,6 @@ int main(void) {
 	bool shutdownServer = false;
 	Client clients[MAXCLIENTS];
 	int numClients = 0;
-	Game bitcampGame;
 
 	std::cout << sizeof(clients);
 
@@ -72,6 +71,8 @@ int main(void) {
 	std::thread exitThread(manualExit, &shutdownServer);
 
 	while (!shutdownServer) {
+		Game bitcampGame;
+
 		addr_len = sizeof their_addr;
 		if ((numbytes = (int) recvfrom(sockfd, buf, MAXBUFLEN - 1, 0, (struct sockaddr *) &their_addr, &addr_len)) == -1) {
 			perror("recvfrom");
@@ -79,19 +80,18 @@ int main(void) {
 		}
 
 		Client newClient(sockfd, their_addr);
-		if (std::string(buf).substr(0, 2) == NEWCLIENT && getClientNum(newClient, clients, numClients) != -1 && numClients < MAXCLIENTS) {
+		if (std::string(buf).substr(0, 2) == NEWCLIENT && getClientNum(newClient, clients, numClients) == -1 && numClients < MAXCLIENTS) {
 			clients[numClients] = newClient;
 			numClients++;
-		} else if (std::string(buf).substr(0, 2) == STARTGAME && numClients >= 2)
+		} else if (std::string(buf).substr(0, 2) == STARTGAME && numClients >= 2) {
 			bitcampGame = Game(numClients, clients);
-		else if (std::string(buf).substr(0, 2) == GAMEREQ && bitcampGame.isRunning()) {
+			bitcampGame.startGame();
+		} else if (std::string(buf).substr(0, 2) == GAMEREQ && bitcampGame.isRunning()) {
 			Request newReq(getClientNum(newClient, clients, numClients), buf + 2, sizeof(buf) - 2);
 			bitcampGame.addRequest(newReq);
 		} else if (std::string(buf).substr(0, 2) == ENDGAME && bitcampGame.isRunning())
 			bitcampGame.killGame();
 	}
-	if (bitcampGame.isRunning())
-		bitcampGame.killGame();
 	close(sockfd);
 	return 0;
 }
@@ -107,6 +107,6 @@ void manualExit(bool *shutdown) {
 int getClientNum(Client newClient, Client clients[MAXCLIENTS], int numClients) {
 	for (int i = 0; i < numClients; i++)
 		if (newClient.getIP() == clients->getIP())
-			return (i);
+			return (i + 1);
 	return (-1);
 }

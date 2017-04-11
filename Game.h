@@ -20,12 +20,16 @@ public:
 
 	void killGame();
 
+	~Game();
+
 private:
 	void run();
 
+	void notifyAllPlayers(std::string);
+
 	bool m_isRunning, m_killGame;
 	int m_numPlayers;
-	Client *m_clients;
+	Client *m_players;
 	std::queue<Request> m_requests;
 };
 

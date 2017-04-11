@@ -36,7 +36,7 @@ public:
 	 * send
 	 * Default send method to relay a void * to the client
 	 */
-	bool send(std::string);
+	bool send(const void *);
 
 	/*
 	 * getIP

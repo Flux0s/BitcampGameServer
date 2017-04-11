@@ -13,9 +13,9 @@ bool Client::send() {
 	return (numbytes = (int) sendto(m_sockFD, defaultMessage.c_str(), sizeof(defaultMessage.c_str()), 0, ((struct sockaddr *) &m_client_addr), sizeof(struct sockaddr_storage))) == -1;
 }
 
-bool Client::send(std::string message) {
+bool Client::send(const void *message) {
 	int numbytes;
-	return (numbytes = (int) sendto(m_sockFD, message.c_str(), sizeof(message.c_str()), 0, ((struct sockaddr *) &m_client_addr), sizeof(struct sockaddr_storage))) == -1;
+	return (numbytes = (int) sendto(m_sockFD, message, sizeof(message), 0, ((struct sockaddr *) &m_client_addr), sizeof(struct sockaddr_storage))) == -1;
 }
 
 std::string Client::getIP() {

@@ -3,5 +3,9 @@
 Request::Request() {}
 
 Request::Request(int playerNum, void *byteStream, int streamLength) {
-	m_player = playerNum;
+	m_playerNum = playerNum;
+}
+
+int Request::getPlayerNum() {
+	return (m_playerNum);
 }

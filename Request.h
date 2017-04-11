@@ -7,8 +7,10 @@ public:
 
 	Request(int, void *, int);
 
+	int getPlayerNum();
+
 private:
-	int m_player;
+	int m_playerNum;
 };
 
 #endif
