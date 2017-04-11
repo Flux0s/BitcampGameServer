@@ -1,15 +1,10 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
 #include <iostream>
 #include <arpa/inet.h>
+#include <cstring>
 
 class Client {
 public:
@@ -36,7 +31,7 @@ public:
 	 * send
 	 * Default send method to relay a const void * to the client
 	 */
-	bool send(const void *);
+	bool send(const char *);
 
 	/*
 	 * getIP

@@ -3,9 +3,13 @@
 
 #include <thread>
 #include <queue>
-#include "iostream"
+#include <iostream>
+#include <mutex>
+
 #include "Client.h"
 #include "Request.h"
+
+#define MINPLAYERS 2
 
 class Game {
 public:
@@ -32,6 +36,7 @@ private:
 	int m_numPlayers;
 	Client *m_players;
 	std::queue<Request> m_requests;
+	std::mutex m_mutex;
 };
 
 #endif

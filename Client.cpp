@@ -13,9 +13,10 @@ bool Client::send() {
 	return (numbytes = (int) sendto(m_sockFD, defaultMessage.c_str(), sizeof(defaultMessage.c_str()), 0, ((struct sockaddr *) &m_client_addr), sizeof(struct sockaddr_storage))) == -1;
 }
 
-bool Client::send(const void *message) {
+bool Client::send(const char *message) {
+	std::cout << message << "\n";
 	int numbytes;
-	return (numbytes = (int) sendto(m_sockFD, message, sizeof(message), 0, ((struct sockaddr *) &m_client_addr), sizeof(struct sockaddr_storage))) == -1;
+	return (numbytes = (int) sendto(m_sockFD, message, strlen(message), 0, ((struct sockaddr *) &m_client_addr), sizeof(struct sockaddr_storage))) == -1;
 }
 
 std::string Client::getIP() {
@@ -23,14 +24,9 @@ std::string Client::getIP() {
 	return (inet_ntop(m_client_addr.ss_family, getInAddr((struct sockaddr *) &m_client_addr), s, sizeof(s)));
 }
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCDFAInspection"
-
 void *Client::getInAddr(struct sockaddr *sa) {
 	if (sa->sa_family == AF_INET) {
 		return &(((struct sockaddr_in *) sa)->sin_addr);
 	}
 	return &(((struct sockaddr_in6 *) sa)->sin6_addr);
 }
-
-#pragma clang diagnostic pop

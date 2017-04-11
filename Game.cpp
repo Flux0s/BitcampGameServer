@@ -1,6 +1,8 @@
 #include "Game.h"
 
-Game::Game() {}
+Game::Game() {
+	m_numPlayers = 0;
+}
 
 Game::Game(int numPlayers, Client *players) {
 	m_killGame = false;
@@ -22,7 +24,7 @@ void Game::run() {
 	bool gameover = false;
 	m_isRunning = true;
 	notifyAllPlayers("Starting game...");
-	while (m_killGame == false && gameover == false) {
+	while (!m_killGame && !gameover) {
 		if (m_requests.size() > 0) {
 			m_players[m_requests.front().getPlayerNum() - 1].send("Request received and handled.");
 			m_requests.pop();
@@ -37,7 +39,8 @@ bool Game::isRunning() {
 }
 
 void Game::killGame() {
-	notifyAllPlayers("Game has been ended unexpectedly!");
+	std::lock_guard<std::mutex> guard(m_mutex);
+	notifyAllPlayers("Closing game unexpectedly!");
 	m_killGame = true;
 }
 
@@ -48,7 +51,7 @@ void Game::notifyAllPlayers(std::string message) {
 }
 
 Game::~Game() {
-	if (m_isRunning)
+	if (m_isRunning) {
 		killGame();
-	notifyAllPlayers("Server is closing!");
+	}
 }
