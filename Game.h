@@ -15,9 +15,9 @@ public:
 
 	void addRequest(Request);
 
-	void startGame();
-
 	bool isRunning();
+
+	std::thread spawn();
 
 	void killGame();
 

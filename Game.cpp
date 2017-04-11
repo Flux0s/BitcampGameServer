@@ -13,9 +13,9 @@ void Game::addRequest(Request newRequest) {
 	m_requests.push(newRequest);
 }
 
-void Game::startGame() {
-	//TODO: Move this thread ouside so the entire class is a thread
-	std::thread gameThread(&Game::run, Game());
+std::thread Game::spawn() {
+	return (std::thread([this] { run(); }));
+
 }
 
 void Game::run() {
