@@ -1,9 +1,6 @@
 #include "Client.h"
 
-Client::Client() {
-	m_sockFD = NULL;
-	m_client_addr = NULL;
-}
+Client::Client() {}
 
 Client::Client(int sockfd, struct sockaddr_storage their_addr) {
 	m_sockFD = sockfd;
