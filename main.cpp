@@ -7,6 +7,7 @@
 #include <thread>
 #include <iostream>
 #include "Client.h"
+#include "Game.h"
 
 #define PORT "18888"
 #define MAXBUFLEN 100
@@ -32,6 +33,7 @@ int main(void) {
 	bool shutdownServer = false;
 	Client clients[MAXCLIENTS];
 	int numClients = 0;
+	Game bitcampGame;
 
 	std::cout << sizeof(clients);
 
@@ -79,7 +81,7 @@ int main(void) {
 			clients[numClients] = newClient;
 		}
 		if (std::string(buf).substr(0, 2) == STARTGAME && numClients >= 2) {
-
+			bitcampGame = Game(numClients, clients);
 		}
 	}
 
